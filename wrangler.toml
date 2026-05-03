@@ -1,0 +1,16 @@
+name = "webhook-filter"
+main = "src/worker.ts"
+compatibility_date = "2026-05-02"
+compatibility_flags = ["nodejs_compat"]
+
+[[d1_databases]]
+binding = "DB"
+database_id = "webhook-filter-db"
+migrations_dir = "./migrations"
+
+[assets]
+directory = "./dist"
+binding = "ASSETS"
+
+[observability]
+enabled = true
