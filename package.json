@@ -11,15 +11,14 @@
     "migrate": "wrangler d1 migrations apply DB --remote"
   },
   "dependencies": {
-    "hono": "^4.6.0",
-    "@hono/jsx": "^0.14.0"
+    "hono": "^4.12.16"
   },
   "devDependencies": {
-    "@cloudflare/vite-plugin": "^1.0.0",
+    "@cloudflare/vite-plugin": "^1.35.0",
     "@hono/vite-dev-server": "^0.14.0",
-    "typescript": "^5.0.0",
-    "wrangler": "^3.0.0",
-    "vite": "^6.0.0"
+    "typescript": "^5.9.3",
+    "vite": "^6.4.2",
+    "wrangler": "^3.114.17"
   },
   "engines": {
     "node": ">=18.0.0"
