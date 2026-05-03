@@ -1,5 +1,6 @@
 import { Hono } from 'hono'
-import { jsx, jsxRenderer } from '@hono/jsx'
+import { jsx } from 'hono/jsx'
+import { jsxRenderer } from 'hono/jsx-renderer'
 
 type Bindings = {
   DB: D1Database

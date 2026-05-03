@@ -1,5 +1,5 @@
 name = "webhook-filter"
-main = "src/worker.ts"
+main = "src/worker.tsx"
 compatibility_date = "2026-05-02"
 compatibility_flags = ["nodejs_compat"]
 

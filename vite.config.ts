@@ -3,12 +3,15 @@ import { cloudflare } from '@cloudflare/vite-plugin'
 
 export default defineConfig({
   plugins: [cloudflare()],
+  esbuild: {
+    jsxImportSource: 'hono/jsx'
+  },
   build: {
     target: 'esnext',
     minify: 'esbuild',
     rollupOptions: {
       input: {
-        worker: './src/worker.ts'
+        worker: './src/worker.tsx'
       },
       output: {
         entryFileNames: '[name].js',

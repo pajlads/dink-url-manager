@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Discord webhook filtering proxy for DinkPlugin with allowlist/denylist support",
   "type": "module",
-  "main": "src/worker.ts",
+  "main": "src/worker.tsx",
   "scripts": {
     "dev": "wrangler dev",
     "build": "vite build",
