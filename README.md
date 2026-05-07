@@ -13,7 +13,7 @@ This service sits between DinkPlugin and Discord, letting you control which play
 
 ### Creating Your Webhook Filter
 
-1. Visit your [deployed worker URL](https://dink-url-manager.gitprodigy.workers.dev/)
+1. Visit your [deployed worker URL](https://dink.pajlada.se)
 2. Click "Create New Webhook Filter"
 3. Copy the webhook URL shown (it includes a secret code)
 4. Enter your Discord channel's webhook URL
@@ -34,7 +34,7 @@ This service sits between DinkPlugin and Discord, letting you control which play
 In your DinkPlugin configuration, set the webhook URL to:
 
 ```
-https://dink-url-manager.gitprodigy.workers.dev/webhook/GENERATED_SECRET_HASH
+https://dink.pajlada.se/webhook/GENERATED_SECRET_HASH
 ```
 
 That's it; DinkPlugin will now send messages through your filter automatically.

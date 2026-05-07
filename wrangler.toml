@@ -6,7 +6,7 @@ compatibility_flags = ["nodejs_compat"]
 [[d1_databases]]
 binding = "DB"
 database_name = "dink-url-manager"
-database_id = "2357bf90-d9b0-4eb4-b1a5-8c1457860579"
+database_id = "e5790075-c05c-4ee4-ac4c-ad1f85da9ea9"
 migrations_dir = "./migrations"
 
 [assets]
@@ -15,6 +15,10 @@ binding = "ASSETS"
 
 [observability]
 enabled = true
+
+[[routes]]
+pattern = "dink.pajlada.se"
+custom_domain = true
 
 [[ratelimits]]
 name = "CONFIG_CREATE_RATELIMIT"
