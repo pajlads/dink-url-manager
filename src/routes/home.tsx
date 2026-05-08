@@ -154,6 +154,13 @@ export function settingsPage(
           <div id="id-list-counter" style="font-size: 0.85rem; color: #666; margin-top: 5px; text-align: right;">
             <span id="current-chars">{idListKeys.length}</span> / 65,535 max
           </div>
+          <small class="small-error" style="display: block; margin-top: 8px;">
+            <strong>Format:</strong> One identifier per line. Identifier checking is case-insensitive.
+            <br />
+            You can add comments by prefixing them with <code>#</code>. Comments can be on their own line or after an identifier. Everything after <code>#</code> is ignored.
+            <br />
+            <em>Example:</em> <code>abcdefg01234567890 # Sam</code> or <code># clan admins</code>
+          </small>
         </div>
 
         <script dangerouslySetInnerHTML={{
@@ -177,18 +184,27 @@ export function settingsPage(
               const MAX_IDENTIFIER_LENGTH = ${MAX_IDENTIFIER_LENGTH};
               const MAX_IDENTIFIER_COUNT = ${MAX_IDENTIFIER_COUNT};
 
-              const nonEmptyLines = lines.filter(l => l.trim()).length;
-              if (nonEmptyLines > MAX_IDENTIFIER_COUNT) {
-                alert('Too many identifiers. Maximum is ' + MAX_IDENTIFIER_COUNT + ' (found ' + nonEmptyLines + ')');
-                return false;
+              let identifierCount = 0;
+              for (let i = 0; i < lines.length; i++) {
+                let line = lines[i];
+                // Strip comment after #
+                const hashIndex = line.indexOf('#');
+                if (hashIndex !== -1) {
+                  line = line.substring(0, hashIndex);
+                }
+                line = line.trim();
+                if (line) {
+                  identifierCount++;
+                  if (line.length > MAX_IDENTIFIER_LENGTH) {
+                    alert('Line ' + (i + 1) + ' exceeds ' + MAX_IDENTIFIER_LENGTH + ' characters after removing comment: ' + line.substring(0, 32) + '...');
+                    return false;
+                  }
+                }
               }
 
-              for (let i = 0; i < lines.length; i++) {
-                const line = lines[i].trim();
-                if (line && line.length > MAX_IDENTIFIER_LENGTH) {
-                  alert('Line ' + (i + 1) + ' exceeds ' + MAX_IDENTIFIER_LENGTH + ' characters: ' + line.substring(0, 32) + '...');
-                  return false;
-                }
+              if (identifierCount > MAX_IDENTIFIER_COUNT) {
+                alert('Too many identifiers. Maximum is ' + MAX_IDENTIFIER_COUNT + ' (found ' + identifierCount + ')');
+                return false;
               }
               return true;
             }

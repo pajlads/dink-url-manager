@@ -1,7 +1,7 @@
 import { type Context } from 'hono'
 import { sha256 } from '../utils/crypto'
 import { getConfigByHash, jsonError, getClientIP, checkRateLimit } from '../utils/db'
-import { parseIdList, idListToString, sanitizeIdentifier, isValidDiscordWebhookUrl } from '../utils/validation'
+import { sanitizeIdentifier, stripComment, isValidDiscordWebhookUrl } from '../utils/validation'
 import { MAX_IDENTIFIER_LENGTH, MAX_IDENTIFIER_COUNT } from '../constants'
 import type { IdList } from '../types'
 import { settingsPage } from './home'
@@ -13,8 +13,7 @@ export async function settingsPageRoute(c: Context) {
   const config = await getConfigByHash(c, hash)
   if (!config) return c.notFound()
 
-  const idList = parseIdList(config.id_list)
-  const idListKeys = idListToString(idList)
+  const idListKeys = config.id_list_raw || ''
 
   return settingsPage(c, secret, config, idListKeys)
 }
@@ -57,8 +56,8 @@ export async function settingsApiRoute(c: Context) {
 
   const idListArray = idListRaw
     .split('\n')
-    .map(s => sanitizeIdentifier(s))
-    .filter(s => s !== "")
+    .map(line => stripComment(line).trim())
+    .filter(line => line !== '')
 
   if (idListArray.length > MAX_IDENTIFIER_COUNT) {
     return jsonError(c, `Too many identifiers. Maximum is ${MAX_IDENTIFIER_COUNT}`, 400)
@@ -66,13 +65,11 @@ export async function settingsApiRoute(c: Context) {
 
   const idListObj: IdList = {}
   for (const rawId of idListArray) {
-    if (!rawId) {
-      return jsonError(c, 'Invalid identifier', 400)
+    const cleaned = sanitizeIdentifier(rawId)
+    if (!cleaned) {
+      return jsonError(c, `Invalid identifier: "${rawId.substring(0, 32)}${rawId.length > 32 ? '...' : ''}"`, 400)
     }
-    if (rawId.length > MAX_IDENTIFIER_LENGTH) {
-      return jsonError(c, `Identifier too long (max ${MAX_IDENTIFIER_LENGTH} chars): "${rawId.substring(0, MAX_IDENTIFIER_LENGTH / 2)}..."`, 400)
-    }
-    idListObj[rawId.toUpperCase()] = true
+    idListObj[cleaned.toUpperCase()] = true
   }
 
   try {
@@ -80,9 +77,10 @@ export async function settingsApiRoute(c: Context) {
       UPDATE webhook_configs SET
         webhook_url = ?,
         mode = ?,
-        id_list = ?
+        id_list = ?,
+        id_list_raw = ?
       WHERE secret_hash = ?
-    `).bind(webhookUrl, mode, JSON.stringify(idListObj), hash).run()
+    `).bind(webhookUrl, mode, JSON.stringify(idListObj), idListRaw.trim(), hash).run()
   } catch (err) {
     console.error('Database error:', err)
     return jsonError(c, 'Failed to update settings', 500)

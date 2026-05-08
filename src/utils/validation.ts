@@ -17,6 +17,11 @@ export function sanitizeIdentifier(value: unknown): string | null {
   return trimmed
 }
 
+export function stripComment(line: string): string {
+  const hashIndex = line.indexOf('#')
+  return hashIndex === -1 ? line : line.substring(0, hashIndex)
+}
+
 export function parseIdList(idListStr: string | null): import('../types').IdList {
   if (!idListStr) return {}
   try {
