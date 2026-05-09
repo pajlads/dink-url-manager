@@ -2,6 +2,7 @@ name = "dink-url-manager"
 main = "src/worker.tsx"
 compatibility_date = "2026-05-02"
 compatibility_flags = ["nodejs_compat"]
+preview_urls = true
 
 [[d1_databases]]
 binding = "DB"
