@@ -163,160 +163,6 @@ export function settingsPage(
           </small>
         </div>
 
-        <script dangerouslySetInnerHTML={{
-          __html: `
-            function updateCharCount(textarea) {
-              document.getElementById('current-chars').textContent = textarea.value.length;
-            }
-            function handleTabKey(e) {
-              if (e.key === 'Tab') {
-                e.preventDefault();
-                const start = e.target.selectionStart;
-                const end = e.target.selectionEnd;
-                e.target.value = e.target.value.substring(0, start) + '\\n' + e.target.value.substring(end);
-                e.target.selectionStart = e.target.selectionEnd = start + 1;
-                updateCharCount(e.target);
-              }
-            }
-            function validateIdList() {
-              const textarea = document.getElementById('id_list');
-              const lines = textarea.value.split('\\n');
-              const MAX_IDENTIFIER_LENGTH = ${MAX_IDENTIFIER_LENGTH};
-              const MAX_IDENTIFIER_COUNT = ${MAX_IDENTIFIER_COUNT};
-
-              let identifierCount = 0;
-              for (let i = 0; i < lines.length; i++) {
-                let line = lines[i];
-                // Strip comment after #
-                const hashIndex = line.indexOf('#');
-                if (hashIndex !== -1) {
-                  line = line.substring(0, hashIndex);
-                }
-                line = line.trim();
-                if (line) {
-                  identifierCount++;
-                  if (line.length > MAX_IDENTIFIER_LENGTH) {
-                    alert('Line ' + (i + 1) + ' exceeds ' + MAX_IDENTIFIER_LENGTH + ' characters after removing comment: ' + line.substring(0, 32) + '...');
-                    return false;
-                  }
-                }
-              }
-
-              if (identifierCount > MAX_IDENTIFIER_COUNT) {
-                alert('Too many identifiers. Maximum is ' + MAX_IDENTIFIER_COUNT + ' (found ' + identifierCount + ')');
-                return false;
-              }
-              return true;
-            }
-            async function copyToClipboard(elementId, button) {
-              const element = document.getElementById(elementId);
-              if (!element) return;
-
-              try {
-                await navigator.clipboard.writeText(element.textContent);
-                button.textContent = 'Copied!';
-                button.classList.add('copied');
-                setTimeout(() => {
-                  button.textContent = 'Copy';
-                  button.classList.remove('copied');
-                }, 2000);
-              } catch (err) {
-                console.error('Failed to copy:', err);
-                button.textContent = 'Failed';
-                setTimeout(() => {
-                  button.textContent = 'Copy';
-                }, 2000);
-              }
-            }
-            function toggleSecret() {
-              const wrapper = document.getElementById('secret-wrapper');
-              const btn = document.getElementById('reveal-btn');
-              if (wrapper.classList.contains('secret-revealed')) {
-                wrapper.classList.remove('secret-revealed');
-                wrapper.classList.add('secret-censored-state');
-                btn.textContent = 'Reveal';
-              } else {
-                wrapper.classList.remove('secret-censored-state');
-                wrapper.classList.add('secret-revealed');
-                btn.textContent = 'Hide';
-              }
-            }
-
-            // Delete button functionality
-            const webhookUrlInput = document.getElementById('webhook_url');
-            const idListTextarea = document.getElementById('id_list');
-            const deleteButton = document.getElementById('delete-button');
-
-            function isIdListEmpty(value) {
-              if (!value || value.trim() === '') return true;
-              const lines = value.split('\\n');
-              for (let line of lines) {
-                // Strip comments
-                const hashIndex = line.indexOf('#');
-                if (hashIndex !== -1) {
-                  line = line.substring(0, hashIndex);
-                }
-                line = line.trim();
-                if (line !== '') return false;
-              }
-              return true;
-            }
-
-            function updateDeleteButtonState() {
-              const webhookEmpty = !webhookUrlInput.value || webhookUrlInput.value.trim() === '';
-              const idListEmpty = isIdListEmpty(idListTextarea.value);
-
-              if (webhookEmpty && idListEmpty) {
-                deleteButton.disabled = false;
-                deleteButton.title = 'Delete this webhook configuration';
-              } else {
-                deleteButton.disabled = true;
-                deleteButton.title = 'Clear webhook URL and identifier list to enable deletion';
-              }
-            }
-
-            async function handleDelete() {
-              const confirmation = window.prompt('Type "delete" to confirm deletion of this webhook configuration:');
-              if (confirmation !== 'delete') {
-                return;
-              }
-
-              const secret = document.getElementById('secret-text').textContent.trim();
-
-              try {
-                const response = await fetch('/api/delete', {
-                  method: 'POST',
-                  headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                  body: new URLSearchParams({ secret })
-                });
-
-                if (response.ok) {
-                  alert('Configuration deleted successfully. You will be redirected to the home page.');
-                  window.location.href = '/';
-                } else {
-                  const data = await response.json();
-                  alert('Failed to delete configuration: ' + (data.error || 'Unknown error'));
-                }
-              } catch (err) {
-                console.error('Delete error:', err);
-                alert('Failed to delete configuration: Network error');
-              }
-            }
-
-            // Attach event listeners
-            if (webhookUrlInput && idListTextarea && deleteButton) {
-              webhookUrlInput.addEventListener('input', updateDeleteButtonState);
-              webhookUrlInput.addEventListener('change', updateDeleteButtonState);
-              idListTextarea.addEventListener('input', updateDeleteButtonState);
-              idListTextarea.addEventListener('change', updateDeleteButtonState);
-              deleteButton.addEventListener('click', handleDelete);
-
-              // Initial state
-              updateDeleteButtonState();
-            }
-          `
-        }} />
-
          <div class="field">
            <button type="submit">Save Settings</button>
            <button type="button" id="delete-button" class="delete-button" disabled title="Clear webhook URL and identifier list to enable deletion">
@@ -341,6 +187,163 @@ export function settingsPage(
       <p>
         <a href="/" class="btn-secondary back-link">← Back to Home</a>
       </p>
+
+      <script dangerouslySetInnerHTML={{
+        __html: `
+        function updateCharCount(textarea) {
+          document.getElementById('current-chars').textContent = textarea.value.length;
+        }
+        function handleTabKey(e) {
+          if (e.key === 'Tab') {
+            e.preventDefault();
+            const start = e.target.selectionStart;
+            const end = e.target.selectionEnd;
+            e.target.value = e.target.value.substring(0, start) + '\\n' + e.target.value.substring(end);
+            e.target.selectionStart = e.target.selectionEnd = start + 1;
+            updateCharCount(e.target);
+          }
+        }
+        function validateIdList() {
+          const textarea = document.getElementById('id_list');
+          const lines = textarea.value.split('\\n');
+          const MAX_IDENTIFIER_LENGTH = ${MAX_IDENTIFIER_LENGTH};
+          const MAX_IDENTIFIER_COUNT = ${MAX_IDENTIFIER_COUNT};
+
+          let identifierCount = 0;
+          for (let i = 0; i < lines.length; i++) {
+            let line = lines[i];
+            // Strip comment after #
+            const hashIndex = line.indexOf('#');
+            if (hashIndex !== -1) {
+              line = line.substring(0, hashIndex);
+            }
+            line = line.trim();
+            if (line) {
+              identifierCount++;
+              if (line.length > MAX_IDENTIFIER_LENGTH) {
+                alert('Line ' + (i + 1) + ' exceeds ' + MAX_IDENTIFIER_LENGTH + ' characters after removing comment: ' + line.substring(0, 32) + '...');
+                return false;
+              }
+            }
+          }
+
+          if (identifierCount > MAX_IDENTIFIER_COUNT) {
+            alert('Too many identifiers. Maximum is ' + MAX_IDENTIFIER_COUNT + ' (found ' + identifierCount + ')');
+            return false;
+          }
+          return true;
+        }
+        async function copyToClipboard(elementId, button) {
+          const element = document.getElementById(elementId);
+          if (!element) return;
+
+          try {
+            await navigator.clipboard.writeText(element.textContent);
+            button.textContent = 'Copied!';
+            button.classList.add('copied');
+            setTimeout(() => {
+              button.textContent = 'Copy';
+            button.classList.remove('copied');
+            }, 2000);
+          } catch (err) {
+            console.error('Failed to copy:', err);
+            button.textContent = 'Failed';
+            setTimeout(() => {
+              button.textContent = 'Copy';
+            }, 2000);
+          }
+        }
+        function toggleSecret() {
+          const wrapper = document.getElementById('secret-wrapper');
+          const btn = document.getElementById('reveal-btn');
+          if (wrapper.classList.contains('secret-revealed')) {
+            wrapper.classList.remove('secret-revealed');
+            wrapper.classList.add('secret-censored-state');
+            btn.textContent = 'Reveal';
+          } else {
+            wrapper.classList.remove('secret-censored-state');
+            wrapper.classList.add('secret-revealed');
+            btn.textContent = 'Hide';
+          }
+        }
+
+        // Delete button functionality
+        function isIdListEmpty(value) {
+          if (!value || value.trim() === '') return true;
+          const lines = value.split('\\n');
+          for (let line of lines) {
+            // Strip comments
+            const hashIndex = line.indexOf('#');
+            if (hashIndex !== -1) {
+              line = line.substring(0, hashIndex);
+            }
+            line = line.trim();
+            if (line !== '') return false;
+          }
+          return true;
+        }
+
+        function updateDeleteButtonState() {
+          const webhookUrlInput = document.getElementById('webhook_url');
+          const idListTextarea = document.getElementById('id_list');
+          const deleteButton = document.getElementById('delete-button');
+
+          const webhookEmpty = !webhookUrlInput.value || webhookUrlInput.value.trim() === '';
+          const idListEmpty = isIdListEmpty(idListTextarea.value);
+
+          if (webhookEmpty && idListEmpty) {
+            deleteButton.disabled = false;
+            deleteButton.title = 'Delete this webhook configuration';
+          } else {
+            deleteButton.disabled = true;
+            deleteButton.title = 'Clear webhook URL and identifier list to enable deletion';
+          }
+        }
+
+        async function handleDelete() {
+          const confirmation = window.prompt('Type "delete" to confirm deletion of this webhook configuration.\n\nThis is a destructive action that cannot be undone.\nNote: this will not kill the underlying Discord webhook URL.');
+          if (confirmation.toLowerCase() !== 'delete') {
+            return;
+          }
+
+          const secret = document.getElementById('secret-text').textContent.trim();
+
+          try {
+            const response = await fetch('/api/delete', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+              body: new URLSearchParams({ secret })
+            });
+
+            if (response.ok) {
+              alert('Configuration deleted successfully. You will be redirected to the home page.');
+              window.location.href = '/';
+            } else {
+              const data = await response.json();
+              alert('Failed to delete configuration: ' + (data.error || 'Unknown error'));
+            }
+          } catch (err) {
+            console.error('Delete error:', err);
+            alert('Failed to delete configuration: Network error');
+          }
+        }
+
+        // Attach event listeners
+        document.addEventListener("DOMContentLoaded", (e) => {
+          const webhookUrlInput = document.getElementById('webhook_url');
+          const idListTextarea = document.getElementById('id_list');
+          const deleteButton = document.getElementById('delete-button');
+
+          webhookUrlInput.addEventListener('input', updateDeleteButtonState);
+          webhookUrlInput.addEventListener('change', updateDeleteButtonState);
+          idListTextarea.addEventListener('input', updateDeleteButtonState);
+          idListTextarea.addEventListener('change', updateDeleteButtonState);
+          deleteButton.addEventListener('click', handleDelete);
+
+          updateDeleteButtonState();
+        });
+        `
+      }} />
     </div>
   )
 }
