@@ -301,7 +301,7 @@ export function settingsPage(
         }
 
         async function handleDelete() {
-          const confirmation = window.prompt('Type "delete" to confirm deletion of this webhook configuration.\n\nThis is a destructive action that cannot be undone.\nNote: this will not kill the underlying Discord webhook URL.');
+          const confirmation = window.prompt('Type "delete" to confirm deletion of this webhook configuration.\\n\\nThis is a destructive action that cannot be undone.\\nNote: this will not kill the underlying Discord webhook URL.');
           if (confirmation.toLowerCase() !== 'delete') {
             return;
           }
