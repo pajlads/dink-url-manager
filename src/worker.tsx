@@ -8,7 +8,7 @@ import { globalStyles } from './styles'
 
 import { homePage } from './routes/home'
 import { newConfigRoute } from './routes/new'
-import { settingsPageRoute, settingsApiRoute } from './routes/settings'
+import { settingsPageRoute, settingsApiRoute, deleteApiRoute } from './routes/settings'
 import { webhookRoute } from './routes/webhook'
 
 const app = new Hono<{ Bindings: Bindings }>()
@@ -45,6 +45,11 @@ app.get('/settings/:secret', async (c: Context) => {
 // Settings API (POST)
 app.post('/api/settings', async (c: Context) => {
   return settingsApiRoute(c)
+})
+
+// Delete config API (POST)
+app.post('/api/delete', async (c: Context) => {
+  return deleteApiRoute(c)
 })
 
 // Webhook endpoint (POST)

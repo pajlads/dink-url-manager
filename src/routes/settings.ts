@@ -90,3 +90,34 @@ export async function settingsApiRoute(c: Context) {
   c.header('Location', `/settings/${secret}`)
   return c.text('Settings updated')
 }
+
+export async function deleteApiRoute(c: Context) {
+  const allowed = await checkRateLimit(c.env.CONFIG_UPDATE_RATELIMIT, getClientIP(c))
+  if (!allowed) {
+    return jsonError(c, 'Rate limit exceeded: configuration delete frequency', 429)
+  }
+
+  const body = await c.req.parseBody()
+  const secret = body.secret as string
+
+  if (!secret) {
+    return jsonError(c, 'Missing secret', 400)
+  }
+
+  const hash = await sha256(secret)
+
+  try {
+    const { success } = await c.env.DB.prepare(
+      'DELETE FROM webhook_configs WHERE secret_hash = ?'
+    ).bind(hash).run()
+
+    if (!success) {
+      return jsonError(c, 'Failed to delete configuration', 500)
+    }
+  } catch (err) {
+    console.error('Database error:', err)
+    return jsonError(c, 'Failed to delete configuration', 500)
+  }
+
+  return c.json({ status: 'deleted' })
+}

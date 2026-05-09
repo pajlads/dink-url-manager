@@ -284,6 +284,28 @@ export const globalStyles = css`
       background: #138496;
     }
 
+    .delete-button {
+      background: #dc3545;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: background 0.2s;
+      margin-left: 10px;
+    }
+
+    .delete-button:hover {
+      background: #c82333;
+    }
+
+    .delete-button:disabled {
+      background: #e0e0e0;
+      color: #999;
+      cursor: not-allowed;
+    }
+
     .copy-wrapper {
       display: flex;
       align-items: center;

@@ -241,12 +241,88 @@ export function settingsPage(
                 btn.textContent = 'Hide';
               }
             }
+
+            // Delete button functionality
+            const webhookUrlInput = document.getElementById('webhook_url');
+            const idListTextarea = document.getElementById('id_list');
+            const deleteButton = document.getElementById('delete-button');
+
+            function isIdListEmpty(value) {
+              if (!value || value.trim() === '') return true;
+              const lines = value.split('\\n');
+              for (let line of lines) {
+                // Strip comments
+                const hashIndex = line.indexOf('#');
+                if (hashIndex !== -1) {
+                  line = line.substring(0, hashIndex);
+                }
+                line = line.trim();
+                if (line !== '') return false;
+              }
+              return true;
+            }
+
+            function updateDeleteButtonState() {
+              const webhookEmpty = !webhookUrlInput.value || webhookUrlInput.value.trim() === '';
+              const idListEmpty = isIdListEmpty(idListTextarea.value);
+
+              if (webhookEmpty && idListEmpty) {
+                deleteButton.disabled = false;
+                deleteButton.title = 'Delete this webhook configuration';
+              } else {
+                deleteButton.disabled = true;
+                deleteButton.title = 'Clear webhook URL and identifier list to enable deletion';
+              }
+            }
+
+            async function handleDelete() {
+              const confirmation = window.prompt('Type "delete" to confirm deletion of this webhook configuration:');
+              if (confirmation !== 'delete') {
+                return;
+              }
+
+              const secret = document.getElementById('secret-text').textContent.trim();
+
+              try {
+                const response = await fetch('/api/delete', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                  body: new URLSearchParams({ secret })
+                });
+
+                if (response.ok) {
+                  alert('Configuration deleted successfully. You will be redirected to the home page.');
+                  window.location.href = '/';
+                } else {
+                  const data = await response.json();
+                  alert('Failed to delete configuration: ' + (data.error || 'Unknown error'));
+                }
+              } catch (err) {
+                console.error('Delete error:', err);
+                alert('Failed to delete configuration: Network error');
+              }
+            }
+
+            // Attach event listeners
+            if (webhookUrlInput && idListTextarea && deleteButton) {
+              webhookUrlInput.addEventListener('input', updateDeleteButtonState);
+              webhookUrlInput.addEventListener('change', updateDeleteButtonState);
+              idListTextarea.addEventListener('input', updateDeleteButtonState);
+              idListTextarea.addEventListener('change', updateDeleteButtonState);
+              deleteButton.addEventListener('click', handleDelete);
+
+              // Initial state
+              updateDeleteButtonState();
+            }
           `
         }} />
 
-        <div class="field">
-          <button type="submit">Save Settings</button>
-        </div>
+         <div class="field">
+           <button type="submit">Save Settings</button>
+           <button type="button" id="delete-button" class="delete-button" disabled title="Clear webhook URL and identifier list to enable deletion">
+             Delete Configuration
+           </button>
+         </div>
       </form>
 
       <h2>Webhook URL</h2>
