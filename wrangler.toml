@@ -4,6 +4,10 @@ compatibility_date = "2026-05-02"
 compatibility_flags = ["nodejs_compat"]
 preview_urls = true
 
+[vars]
+# Set to true to prevent the creation of new webhook configurations.
+DISABLE_NEW_CONFIGS = false
+
 [[d1_databases]]
 binding = "DB"
 database_name = "dink-url-manager"

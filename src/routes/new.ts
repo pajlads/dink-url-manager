@@ -3,6 +3,10 @@ import { generateSecret } from '../utils/crypto'
 import { jsonError, getClientIP, checkRateLimit } from '../utils/db'
 
 export async function newConfigRoute(c: Context) {
+  if (c.env.DISABLE_NEW_CONFIGS) {
+    return jsonError(c, 'Creation of new webhook configurations is disabled', 403)
+  }
+
   const allowed = await checkRateLimit(c.env.CONFIG_CREATE_RATELIMIT, getClientIP(c))
   if (!allowed) {
     return jsonError(c, 'Rate limit exceeded: webhook configuration creation frequency', 429)

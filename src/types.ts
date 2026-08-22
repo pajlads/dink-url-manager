@@ -26,4 +26,5 @@ export type Bindings = {
   CONFIG_UPDATE_RATELIMIT: RateLimit
   WEBHOOK_SECRET_RATELIMIT: RateLimit
   WEBHOOK_IP_RATELIMIT: RateLimit
+  DISABLE_NEW_CONFIGS?: boolean
 }

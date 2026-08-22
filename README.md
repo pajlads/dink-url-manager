@@ -68,3 +68,21 @@ The most secure option is to solely use an allowlist of account hashes.
 **Lost your secret?**
 
 Navigate to `/new` to create a fresh configuration (if you can't find the old secret in your browser history) and update your DinkPlugin settings.
+
+## Self Hosting
+
+Instead of relying upon [our instance](https://dink.pajlada.se/), you can create your own Cloudflare Worker using this repo.
+
+#### Disabling New Webhook Creation
+
+The admin can disable the creation of new webhook configurations by setting the
+`DISABLE_NEW_CONFIGS` environment variable in `wrangler.toml` to `true`:
+
+```toml
+[vars]
+DISABLE_NEW_CONFIGS = true
+```
+
+When enabled, requests to `/new` are rejected with `403 Forbidden`. Existing
+configurations and their webhooks continue to function normally. This is useful
+for "freezing" a deployment once the desired filters have been created.
