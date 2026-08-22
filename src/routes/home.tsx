@@ -1,6 +1,6 @@
 import { jsx } from 'hono/jsx'
 import { type Context } from 'hono'
-import { WEBHOOK_URL_BASE, MAX_IDENTIFIER_LENGTH, MAX_IDENTIFIER_COUNT } from '../constants'
+import { MAX_IDENTIFIER_LENGTH, MAX_IDENTIFIER_COUNT } from '../constants'
 import type { WebhookConfig, IdList } from '../types'
 
 export function homePage(c: Context) {
@@ -77,7 +77,7 @@ export function settingsPage(
   config: WebhookConfig,
   idListKeys: string
 ) {
-  const webhookUrl = `${WEBHOOK_URL_BASE}/webhook/${config.secret_hash}`
+  const webhookUrl = `${new URL(c.req.url).origin}/webhook/${config.secret_hash}`
 
   return c.render(
     <div>

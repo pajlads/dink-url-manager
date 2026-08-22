@@ -1,6 +1,11 @@
 # DinkPlugin Webhook Filter
 
+[![Deploy to Cloudflare](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/pajlads/dink-url-manager)
+
 A simple proxy service that filters Discord webhook messages from [DinkPlugin](https://github.com/pajlads/DinkPlugin) based on player allowlists and denylists.
+
+**Prefer to run your own?** Click the button above to deploy your own copy to Cloudflare!
+Once deployed, on the `Domains` tab in the Cloudflare Worker dashboard, enable the production `Worker URL` so you can access the `Visit` button at the top right
 
 ## What It Does
 
