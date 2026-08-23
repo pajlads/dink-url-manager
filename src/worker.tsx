@@ -8,26 +8,31 @@ import { globalStyles } from './styles'
 
 import { homePage } from './routes/home'
 import { newConfigRoute } from './routes/new'
-import { settingsPageRoute, settingsApiRoute, deleteApiRoute } from './routes/settings'
+import {
+  settingsPageRoute,
+  settingsApiRoute,
+  deleteApiRoute,
+} from './routes/settings'
 import { webhookRoute } from './routes/webhook'
 
 const app = new Hono<{ Bindings: Bindings }>()
 
-app.use('*', jsxRenderer(({ children }) => (
-  <html lang="en">
-    <head>
-      <meta charset="UTF-8" />
-      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-      <title>DinkPlugin Webhook Filter</title>
-      <Style>{globalStyles}</Style>
-    </head>
-    <body>
-      <div class="container">
-        {children}
-      </div>
-    </body>
-  </html>
-  )))
+app.use(
+  '*',
+  jsxRenderer(({ children }) => (
+    <html lang="en">
+      <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>DinkPlugin Webhook Filter</title>
+        <Style>{globalStyles}</Style>
+      </head>
+      <body>
+        <div class="container">{children}</div>
+      </body>
+    </html>
+  ))
+)
 
 // Homepage
 app.get('/', (c: Context) => homePage(c))

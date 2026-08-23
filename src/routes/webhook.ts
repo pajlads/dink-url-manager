@@ -6,14 +6,28 @@ import type { WebhookPayload } from '../types'
 export async function webhookRoute(c: Context) {
   const secretHash = c.req.param('hash')
 
-  const ipAllowed = await checkRateLimit(c.env.WEBHOOK_IP_RATELIMIT, getClientIP(c))
+  const ipAllowed = await checkRateLimit(
+    c.env.WEBHOOK_IP_RATELIMIT,
+    getClientIP(c)
+  )
   if (!ipAllowed) {
-    return jsonError(c, 'Rate limit exceeded: webhook posts per second from this IP', 429)
+    return jsonError(
+      c,
+      'Rate limit exceeded: webhook posts per second from this IP',
+      429
+    )
   }
 
-  const secretAllowed = await checkRateLimit(c.env.WEBHOOK_SECRET_RATELIMIT, secretHash)
+  const secretAllowed = await checkRateLimit(
+    c.env.WEBHOOK_SECRET_RATELIMIT,
+    secretHash
+  )
   if (!secretAllowed) {
-    return jsonError(c, 'Rate limit exceeded: webhook posts per second for this webhook configuration', 429)
+    return jsonError(
+      c,
+      'Rate limit exceeded: webhook posts per second for this webhook configuration',
+      429
+    )
   }
 
   const contentType = c.req.header('Content-Type') || ''
@@ -55,7 +69,8 @@ export async function webhookRoute(c: Context) {
     return jsonError(c, 'Invalid identifier format', 400)
   }
 
-  const { results } = await c.env.DB.prepare(`
+  const { results } = await c.env.DB.prepare(
+    `
     SELECT webhook_url
     FROM webhook_configs
     WHERE secret_hash = ?
@@ -72,7 +87,16 @@ export async function webhookRoute(c: Context) {
           json_extract(id_list, '$."' || ? || '"') IS NULL
         ))
       )
-  `).bind(secretHash, cleanHash.toUpperCase(), cleanName.toUpperCase(), cleanHash.toUpperCase(), cleanName.toUpperCase()).run()
+  `
+  )
+    .bind(
+      secretHash,
+      cleanHash.toUpperCase(),
+      cleanName.toUpperCase(),
+      cleanHash.toUpperCase(),
+      cleanName.toUpperCase()
+    )
+    .run()
 
   if (results.length === 0) {
     return c.json({ status: 'filtered' })
@@ -97,7 +121,7 @@ export async function webhookRoute(c: Context) {
       await fetch(webhookUrl, {
         method: 'POST',
         body: JSON.stringify(payload),
-        headers: { 'Content-Type': 'application/json' }
+        headers: { 'Content-Type': 'application/json' },
       })
     }
   } catch (err) {

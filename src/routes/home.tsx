@@ -8,12 +8,15 @@ export function homePage(c: Context) {
     <div>
       <h1>DinkPlugin Webhook Filter</h1>
       <p>
-        This service filters Discord webhook notifications from <a href="https://runelite.net/plugin-hub/show/dink">DinkPlugin</a>.
+        This service filters Discord webhook notifications from{' '}
+        <a href="https://runelite.net/plugin-hub/show/dink">DinkPlugin</a>.
       </p>
       <p>
-        You can filter notifications by the player name or their dink account hash (obtained via the <code>::DinkHash</code> in-game command).
-        Allowlist mode only <i>accepts</i> notifications where the player name or hash is on the configured list.
-        Denylist mode <i>rejects</i> notifications where the player name or hash is on the configured list.
+        You can filter notifications by the player name or their dink account
+        hash (obtained via the <code>::DinkHash</code> in-game command).
+        Allowlist mode only <i>accepts</i> notifications where the player name
+        or hash is on the configured list. Denylist mode <i>rejects</i>{' '}
+        notifications where the player name or hash is on the configured list.
       </p>
       <div class="field">
         <a href="/new" class="button-link">
@@ -35,8 +38,9 @@ export function homePage(c: Context) {
           <button type="submit">Go to Settings</button>
         </form>
       </div>
-      <script dangerouslySetInnerHTML={{
-        __html: `
+      <script
+        dangerouslySetInnerHTML={{
+          __html: `
           function handleAccessSubmit(e) {
             e.preventDefault();
             const secret = document.getElementById('secret_input').value.trim();
@@ -44,28 +48,52 @@ export function homePage(c: Context) {
               window.location.href = '/settings/' + encodeURIComponent(secret);
             }
           }
-        `
-      }} />
+        `,
+        }}
+      />
       <h2>How It Works</h2>
       <p>
-        1. <strong>Create</strong> a new webhook configuration (generates a secret key).<br />
-        2. <strong>Configure</strong> your Discord webhook URL, identifier list (dink hashes and/or player names), and mode (allowlist or denylist).<br />
-        3. <strong>Set</strong> the generated webhook URL in your DinkPlugin configuration.<br />
-        4. <strong>Filter</strong> incoming webhooks to only forward notifications to Discord that pass the specified configuration; others are silently dropped by this service.
+        1. <strong>Create</strong> a new webhook configuration (generates a
+        secret key).
+        <br />
+        2. <strong>Configure</strong> your Discord webhook URL, identifier list
+        (dink hashes and/or player names), and mode (allowlist or denylist).
+        <br />
+        3. <strong>Set</strong> the generated webhook URL in your DinkPlugin
+        configuration.
+        <br />
+        4. <strong>Filter</strong> incoming webhooks to only forward
+        notifications to Discord that pass the specified configuration; others
+        are silently dropped by this service.
       </p>
       <h2>Security</h2>
       <p>
-        Each webhook filter configuration is authenticated by a secret that is shown at creation and never stored in plaintext.
-        The secret is used to compute a hash that appears in the webhook URL.
-        Only someone with the secret can modify the configuration (and it is virtually impossible to reverse the hash to determine the raw secret).
+        Each webhook filter configuration is authenticated by a secret that is
+        shown at creation and never stored in plaintext. The secret is used to
+        compute a hash that appears in the webhook URL. Only someone with the
+        secret can modify the configuration (and it is virtually impossible to
+        reverse the hash to determine the raw secret).
       </p>
       <p>
-        The most secure filter configuration is an allowlist on dink account hashes, as it is exceedingly difficult to guess another player's account hash.
-        The easiest-to-bypass filter configuration is a denylist on player names (as the denylisted player could change their name or modify the json payload).
+        The most secure filter configuration is an allowlist on dink account
+        hashes, as it is exceedingly difficult to guess another player's account
+        hash. The easiest-to-bypass filter configuration is a denylist on player
+        names (as the denylisted player could change their name or modify the
+        json payload).
       </p>
       <p>
-        The source code for this project can be viewed on <a href="https://github.com/pajlads/dink-url-manager">GitHub</a>.
-        You can self-host this <a href="https://developers.cloudflare.com/workers/">Cloudflare Worker</a> for <a href="https://developers.cloudflare.com/workers/platform/pricing/">free</a> if you are uncomfortable with the operators of this service being able to read your webhook configurations.
+        The source code for this project can be viewed on{' '}
+        <a href="https://github.com/pajlads/dink-url-manager">GitHub</a>. You
+        can self-host this{' '}
+        <a href="https://developers.cloudflare.com/workers/">
+          Cloudflare Worker
+        </a>{' '}
+        for{' '}
+        <a href="https://developers.cloudflare.com/workers/platform/pricing/">
+          free
+        </a>{' '}
+        if you are uncomfortable with the operators of this service being able
+        to read your webhook configurations.
       </p>
       <p>
         <small>v1.0.1</small>
@@ -87,29 +115,53 @@ export function settingsPage(
       <h1>Webhook Filter Settings</h1>
 
       <div class="field">
-        <label><strong>Secret Key</strong></label>
+        <label>
+          <strong>Secret Key</strong>
+        </label>
         <div class="secret-container">
           <div class="copy-wrapper">
-            <div class="secret-wrapper secret-censored-state" id="secret-wrapper">
+            <div
+              class="secret-wrapper secret-censored-state"
+              id="secret-wrapper"
+            >
               <code class="secret-censored">
                 ••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
               </code>
-              <code class="secret-plain" id="secret-text">{secret}</code>
+              <code class="secret-plain" id="secret-text">
+                {secret}
+              </code>
             </div>
-            <button class="copy-button" data-copy-target="secret-text" onclick="copyToClipboard('secret-text', this)">
+            <button
+              class="copy-button"
+              data-copy-target="secret-text"
+              onclick="copyToClipboard('secret-text', this)"
+            >
               Copy
             </button>
-            <button class="reveal-button" id="reveal-btn" onclick="toggleSecret()">
+            <button
+              class="reveal-button"
+              id="reveal-btn"
+              onclick="toggleSecret()"
+            >
               Reveal
             </button>
           </div>
         </div>
         <small class="small-error">
-          <strong>Treat this key as a password; it is required to modify the configuration below and we cannot provide it if lost.</strong> Click the Reveal button to show the secret. Copy and save it somewhere safe (or bookmark this page).
+          <strong>
+            Treat this key as a password; it is required to modify the
+            configuration below and we cannot provide it if lost.
+          </strong>{' '}
+          Click the Reveal button to show the secret. Copy and save it somewhere
+          safe (or bookmark this page).
         </small>
       </div>
 
-      <form method="post" action="/api/settings" onsubmit="return validateIdList()">
+      <form
+        method="post"
+        action="/api/settings"
+        onsubmit="return validateIdList()"
+      >
         <input type="hidden" name="secret" value={secret} />
 
         <div class="field">
@@ -123,24 +175,35 @@ export function settingsPage(
             required
           />
           <small>
-            Enter your Discord channel's webhook URL. You can create a webhook via <code>Channel Settings &rarr; Integrations &rarr; Webhooks &rarr; New Webhook</code>
+            Enter your Discord channel's webhook URL. You can create a webhook
+            via{' '}
+            <code>
+              Channel Settings &rarr; Integrations &rarr; Webhooks &rarr; New
+              Webhook
+            </code>
           </small>
         </div>
 
         <div class="field">
           <label htmlFor="mode">Filter Mode</label>
           <select id="mode" name="mode">
-             <option value="allow" selected={config.mode === 'allow'}>
-               Allow matching identifiers (allowlist; more secure)
-             </option>
-             <option value="deny" selected={config.mode === 'deny'}>
-               Deny matching identifiers (denylist; easier)
-             </option>
+            <option value="allow" selected={config.mode === 'allow'}>
+              Allow matching identifiers (allowlist; more secure)
+            </option>
+            <option value="deny" selected={config.mode === 'deny'}>
+              Deny matching identifiers (denylist; easier)
+            </option>
           </select>
-           <small>
-             <strong>Allow mode:</strong> Forwarded if the player's dink account hash <strong>or</strong> the player name appears in the list (case-insensitive).<br />
-             <strong>Deny mode:</strong> Forwarded only if <strong>neither</strong> the player's dink account hash <strong>nor</strong> the player name appears in the list (case-insensitive).
-           </small>
+          <small>
+            <strong>Allow mode:</strong> Forwarded if the player's dink account
+            hash <strong>or</strong> the player name appears in the list
+            (case-insensitive).
+            <br />
+            <strong>Deny mode:</strong> Forwarded only if{' '}
+            <strong>neither</strong> the player's dink account hash{' '}
+            <strong>nor</strong> the player name appears in the list
+            (case-insensitive).
+          </small>
         </div>
 
         <div class="field">
@@ -153,46 +216,73 @@ export function settingsPage(
             maxlength="65535"
             oninput="updateCharCount(this)"
             onkeydown="handleTabKey(event)"
-          >{idListKeys}</textarea>
-          <div id="id-list-counter" style="font-size: 0.85rem; color: #666; margin-top: 5px; text-align: right;">
+          >
+            {idListKeys}
+          </textarea>
+          <div
+            id="id-list-counter"
+            style="font-size: 0.85rem; color: #666; margin-top: 5px; text-align: right;"
+          >
             <span id="current-chars">{idListKeys.length}</span> / 65,535 max
           </div>
           <small class="small-error" style="display: block; margin-top: 8px;">
-            <strong>Format:</strong> One identifier per line. Identifier checking is case-insensitive.
+            <strong>Format:</strong> One identifier per line. Identifier
+            checking is case-insensitive.
             <br />
-            You can add comments by prefixing them with <code>#</code>. Comments can be on their own line or after an identifier. Everything after <code>#</code> is ignored.
+            You can add comments by prefixing them with <code>#</code>. Comments
+            can be on their own line or after an identifier. Everything after{' '}
+            <code>#</code> is ignored.
             <br />
-            <em>Example:</em> <code>abcdefg01234567890 # Sam</code> or <code># clan admins</code>
+            <em>Example:</em> <code>abcdefg01234567890 # Sam</code> or{' '}
+            <code># clan admins</code>
           </small>
         </div>
 
-         <div class="field">
-           <button type="submit">Save Settings</button>
-           <button type="button" id="delete-button" class="delete-button" disabled title="Clear webhook URL and identifier list to enable deletion">
-             Delete Configuration
-           </button>
-         </div>
+        <div class="field">
+          <button type="submit">Save Settings</button>
+          <button
+            type="button"
+            id="delete-button"
+            class="delete-button"
+            disabled
+            title="Clear webhook URL and identifier list to enable deletion"
+          >
+            Delete Configuration
+          </button>
+        </div>
       </form>
 
       <h2>Webhook URL</h2>
       <div class="webhook-url-container">
         <div class="copy-wrapper">
-          <code class="webhook-url" id="webhook-text" style="flex: 1;">{webhookUrl}</code>
-          <button class="copy-button" data-copy-target="webhook-text" onclick="copyToClipboard('webhook-text', this)">
+          <code class="webhook-url" id="webhook-text" style="flex: 1;">
+            {webhookUrl}
+          </code>
+          <button
+            class="copy-button"
+            data-copy-target="webhook-text"
+            onclick="copyToClipboard('webhook-text', this)"
+          >
             Copy
           </button>
         </div>
       </div>
       <p>
-        <small>Use this URL as your webhook in DinkPlugin. This URL will not work for other Discord notification plugins, only Dink.</small>
+        <small>
+          Use this URL as your webhook in DinkPlugin. This URL will not work for
+          other Discord notification plugins, only Dink.
+        </small>
       </p>
 
       <p>
-        <a href="/" class="btn-secondary back-link">← Back to Home</a>
+        <a href="/" class="btn-secondary back-link">
+          ← Back to Home
+        </a>
       </p>
 
-      <script dangerouslySetInnerHTML={{
-        __html: `
+      <script
+        dangerouslySetInnerHTML={{
+          __html: `
         function updateCharCount(textarea) {
           document.getElementById('current-chars').textContent = textarea.value.length;
         }
@@ -345,8 +435,9 @@ export function settingsPage(
 
           updateDeleteButtonState();
         });
-        `
-      }} />
+        `,
+        }}
+      />
     </div>
   )
 }
