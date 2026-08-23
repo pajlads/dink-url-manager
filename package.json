@@ -1,6 +1,6 @@
 {
   "name": "dink-url-manager",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Discord webhook filtering proxy for DinkPlugin with allowlist/denylist support",
   "type": "module",
   "main": "src/worker.tsx",

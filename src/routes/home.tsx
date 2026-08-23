@@ -67,6 +67,9 @@ export function homePage(c: Context) {
         The source code for this project can be viewed on <a href="https://github.com/pajlads/dink-url-manager">GitHub</a>.
         You can self-host this <a href="https://developers.cloudflare.com/workers/">Cloudflare Worker</a> for <a href="https://developers.cloudflare.com/workers/platform/pricing/">free</a> if you are uncomfortable with the operators of this service being able to read your webhook configurations.
       </p>
+      <p>
+        <small>v1.0.1</small>
+      </p>
     </div>
   )
 }
