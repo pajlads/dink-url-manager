@@ -9,7 +9,10 @@ export const globalStyles = css`
     }
 
     body {
-      font-family: system-ui, -apple-system, sans-serif;
+      font-family:
+        system-ui,
+        -apple-system,
+        sans-serif;
       line-height: 1.6;
       color: #333;
       max-width: 65em;
@@ -60,8 +63,8 @@ export const globalStyles = css`
       font-size: 0.85em;
     }
 
-    input[type="text"],
-    input[type="url"],
+    input[type='text'],
+    input[type='url'],
     textarea,
     select {
       width: 100%;
@@ -72,8 +75,8 @@ export const globalStyles = css`
       font-size: 1rem;
     }
 
-    input[type="text"]:focus,
-    input[type="url"]:focus,
+    input[type='text']:focus,
+    input[type='url']:focus,
     textarea:focus,
     select:focus {
       outline: none;

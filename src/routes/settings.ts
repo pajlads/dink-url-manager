@@ -1,7 +1,16 @@
 import { type Context } from 'hono'
 import { sha256 } from '../utils/crypto'
-import { getConfigByHash, jsonError, getClientIP, checkRateLimit } from '../utils/db'
-import { sanitizeIdentifier, stripComment, isValidDiscordWebhookUrl } from '../utils/validation'
+import {
+  getConfigByHash,
+  jsonError,
+  getClientIP,
+  checkRateLimit,
+} from '../utils/db'
+import {
+  sanitizeIdentifier,
+  stripComment,
+  isValidDiscordWebhookUrl,
+} from '../utils/validation'
 import { MAX_IDENTIFIER_LENGTH, MAX_IDENTIFIER_COUNT } from '../constants'
 import type { IdList } from '../types'
 import { settingsPage } from './home'
@@ -19,9 +28,16 @@ export async function settingsPageRoute(c: Context) {
 }
 
 export async function settingsApiRoute(c: Context) {
-  const allowed = await checkRateLimit(c.env.CONFIG_UPDATE_RATELIMIT, getClientIP(c))
+  const allowed = await checkRateLimit(
+    c.env.CONFIG_UPDATE_RATELIMIT,
+    getClientIP(c)
+  )
   if (!allowed) {
-    return jsonError(c, 'Rate limit exceeded: configuration update frequency', 429)
+    return jsonError(
+      c,
+      'Rate limit exceeded: configuration update frequency',
+      429
+    )
   }
 
   const body = await c.req.parseBody()
@@ -56,31 +72,43 @@ export async function settingsApiRoute(c: Context) {
 
   const idListArray = idListRaw
     .split('\n')
-    .map(line => stripComment(line).trim())
-    .filter(line => line !== '')
+    .map((line) => stripComment(line).trim())
+    .filter((line) => line !== '')
 
   if (idListArray.length > MAX_IDENTIFIER_COUNT) {
-    return jsonError(c, `Too many identifiers. Maximum is ${MAX_IDENTIFIER_COUNT}`, 400)
+    return jsonError(
+      c,
+      `Too many identifiers. Maximum is ${MAX_IDENTIFIER_COUNT}`,
+      400
+    )
   }
 
   const idListObj: IdList = {}
   for (const rawId of idListArray) {
     const cleaned = sanitizeIdentifier(rawId)
     if (!cleaned) {
-      return jsonError(c, `Invalid identifier: "${rawId.substring(0, 32)}${rawId.length > 32 ? '...' : ''}"`, 400)
+      return jsonError(
+        c,
+        `Invalid identifier: "${rawId.substring(0, 32)}${rawId.length > 32 ? '...' : ''}"`,
+        400
+      )
     }
     idListObj[cleaned.toUpperCase()] = true
   }
 
   try {
-    await c.env.DB.prepare(`
+    await c.env.DB.prepare(
+      `
       UPDATE webhook_configs SET
         webhook_url = ?,
         mode = ?,
         id_list = ?,
         id_list_raw = ?
       WHERE secret_hash = ?
-    `).bind(webhookUrl, mode, JSON.stringify(idListObj), idListRaw.trim(), hash).run()
+    `
+    )
+      .bind(webhookUrl, mode, JSON.stringify(idListObj), idListRaw.trim(), hash)
+      .run()
   } catch (err) {
     console.error('Database error:', err)
     return jsonError(c, 'Failed to update settings', 500)
@@ -92,9 +120,16 @@ export async function settingsApiRoute(c: Context) {
 }
 
 export async function deleteApiRoute(c: Context) {
-  const allowed = await checkRateLimit(c.env.CONFIG_UPDATE_RATELIMIT, getClientIP(c))
+  const allowed = await checkRateLimit(
+    c.env.CONFIG_UPDATE_RATELIMIT,
+    getClientIP(c)
+  )
   if (!allowed) {
-    return jsonError(c, 'Rate limit exceeded: configuration delete frequency', 429)
+    return jsonError(
+      c,
+      'Rate limit exceeded: configuration delete frequency',
+      429
+    )
   }
 
   const body = await c.req.parseBody()
@@ -109,7 +144,9 @@ export async function deleteApiRoute(c: Context) {
   try {
     const { success } = await c.env.DB.prepare(
       'DELETE FROM webhook_configs WHERE secret_hash = ?'
-    ).bind(hash).run()
+    )
+      .bind(hash)
+      .run()
 
     if (!success) {
       return jsonError(c, 'Failed to delete configuration', 500)
